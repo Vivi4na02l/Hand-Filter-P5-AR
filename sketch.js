@@ -8,6 +8,15 @@ let averageX = 0;
 let newAverageX;
 let handSkeletonColor = "#FFFF00";
 
+//* images */
+let hand;
+
+//* reading palm variables */
+let readingPalmMode = true; //variable used when the image "hand" is visible
+let readingPalm = false; //variable used to when the user's hand is above the image "hand"
+let whileReadingTimer = 0;
+let readingComplete = false;
+
 
 /**
  * ML5 function for when camera is ready and defining its dimensions
@@ -48,9 +57,33 @@ function drawKeypoints() {
             if (j == prediction.landmarks.length-1) {
                 averageX = averageX / prediction.landmarks.length;
                 newAverageX = map(averageX, 0, dims.videoWidth, 0, width);
+
+                //if the "hand" image is visible in the screen
+                if (readingPalmMode) {
+                    if (newAverageX < width*0.75 && newAverageX > width*0.05) { //if user's hand is above the image "hand"
+
+                        if (!readingPalm) {
+                            readingPalm = true;
+                            whileReadingTimer = ms;
+                        }
+                        
+                        if (ms - whileReadingTimer > 2000) {
+                            readingComplete = true;
+                        }
+                    } else {
+                        if (!readingComplete) {
+                            readingPalm = false;
+                            whileReadingTimer = 0; //resets timer
+                        }
+                    }
+                }
             }
         }
     }
+}
+
+function preload() {
+    hand = loadImage('images/hand.png');
 }
 
 function setup() {
@@ -72,15 +105,21 @@ function setup() {
 
 function draw() {
     clear();
-    ms = millis(); //code to calculate milliseconds
+    ms = millis(); //counts milliseconds throughout the running of the code
 
-    //* ML5 */
+    //* ML5 default code */
     push();
     translate(0, 0);
     tint(255, 255);
     // scale(-1, 1)
     image(video, 0, 0, width, height);
     pop();
-
     drawKeypoints();
+
+    //* reading palm */
+    if (readingPalm) {
+        
+    } else if (!readingPalm && !readingComplete) {
+
+    }
 }

@@ -17,3 +17,8 @@ canvas {
 .aic {
     align-items: center;
 }
+
+.absolute {
+    position: absolute;
+    top: 0px;    
+}
