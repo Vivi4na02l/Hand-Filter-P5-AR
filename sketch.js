@@ -5,7 +5,8 @@ let video;
 let predictions = [];
 let dims = {};
 let averageX = 0;
-let newAverageX;
+let averageY = 0;
+let newAverageX, newAverageY;
 
 //* images */
 let hand;
@@ -120,6 +121,7 @@ function drawKeypoints() {
     for (let i = 0; i < predictions.length; i += 1) {
         const prediction = predictions[i]; /* coords for every circle on every finger */
         averageX = 0;
+        averageY = 0;
 
         for (let j = 0; j < prediction.landmarks.length; j += 1) {
             const keypoint = prediction.landmarks[j]; /* coords for every each circle */
@@ -128,8 +130,6 @@ function drawKeypoints() {
             let newY = map(keypoint[1], 0, dims.videoHeight, 0, dims.canvasHeight)
 
             if (!readingComplete) {
-                let currentTimer = ms - whileReadingTimer;
-
                 let hue = colorRainbowHue();
                 fill(hue, 100, 100);
 
@@ -138,13 +138,57 @@ function drawKeypoints() {
             }
 
             averageX += keypoint[0]
+            averageY += keypoint[1]
 
             if (j == prediction.landmarks.length-1) {
                 averageX = averageX / prediction.landmarks.length;
                 newAverageX = map(averageX, 0, dims.videoWidth, 0, width);
+
+                averageY = averageY / prediction.landmarks.length;
+                newAverageY = map(averageY, 0, dims.videoHeight, 0, height);
+
+                //* calculates size that the circle should have, considering the hand depth towards the camera */
+                let circleSize = sizeOfAuraCircle(prediction.landmarks);
+
+                if (readingComplete) {
+                    colorMode(RGB, 255);
+
+                    let translucentColor = color(chosenAura.RGB);
+                    translucentColor.setAlpha(150);
+
+                    fill(translucentColor);
+                    noStroke();
+
+                    circle(newAverageX, newAverageY, circleSize);
+                }
             }
         }
     }
+}
+
+/**
+ * function that determines the smallest and biggest X value in the entire keypoints array
+ * after determining that, it calculates the distance between both, getting width of the hand
+ * @param {*} keypoints receives all of the 21 keypoints detected from user's hand (thanks to ML5 library)
+ * @returns the distance between both the keypoints that are furthest to the left and right
+ */
+function sizeOfAuraCircle(keypoints) {
+    let smallestX = width;
+    let biggestX = 0;
+
+    for (const keypoint of keypoints) {
+        if (keypoint[0] < smallestX) {
+            smallestX = keypoint[0]
+        };
+
+        if (keypoint[0] > biggestX) {
+            biggestX = keypoint[0]
+        };
+    }
+
+    let handWidth = (biggestX - smallestX)*1.7;
+
+    return handWidth;
 }
 
 function preload() {
@@ -236,6 +280,9 @@ function dialogBox() {
     } else if (!readingPalm && !readingComplete) {
         colorMode(RGB, 255);
         fill('#000')
+    } else {
+        colorMode(RGB, 255);
+        fill(chosenAura.RGB)
     }
 
     //* definition of dialog box size */
