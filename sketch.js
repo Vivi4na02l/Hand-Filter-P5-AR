@@ -12,6 +12,7 @@ let handSkeletonColor = "#FFFF00";
 let hand;
 
 //* reading palm variables */
+let videoOpacity = 50;
 let readingPalmMode = true; //variable used when the image "hand" is visible
 let readingPalm = false; //variable used to when the user's hand is above the image "hand"
 let whileReadingTimer = 0;
@@ -38,6 +39,24 @@ function modelReady() {
  * function that draws ellipses and skeletons over the detected keypoints
  */
 function drawKeypoints() {
+    //if there is no hand being detected
+    if (predictions.length == 0) {
+        if (!readingComplete) {
+            readingPalm = false;
+            whileReadingTimer = 0; //resets timer
+            videoOpacity = 50;
+        }
+    } else {
+        if (!readingPalm) {
+            readingPalm = true;
+            whileReadingTimer = ms;
+        }
+
+        if (ms - whileReadingTimer > 5000 && readingPalm) {
+            readingComplete = true;
+        }
+    }
+    
     for (let i = 0; i < predictions.length; i += 1) {
         const prediction = predictions[i]; /* coords for every circle on every finger */
         averageX = 0;
@@ -57,26 +76,6 @@ function drawKeypoints() {
             if (j == prediction.landmarks.length-1) {
                 averageX = averageX / prediction.landmarks.length;
                 newAverageX = map(averageX, 0, dims.videoWidth, 0, width);
-
-                //if the "hand" image is visible in the screen
-                if (readingPalmMode) {
-                    if (newAverageX < width*0.75 && newAverageX > width*0.05) { //if user's hand is above the image "hand"
-
-                        if (!readingPalm) {
-                            readingPalm = true;
-                            whileReadingTimer = ms;
-                        }
-                        
-                        if (ms - whileReadingTimer > 2000) {
-                            readingComplete = true;
-                        }
-                    } else {
-                        if (!readingComplete) {
-                            readingPalm = false;
-                            whileReadingTimer = 0; //resets timer
-                        }
-                    }
-                }
             }
         }
     }
@@ -110,16 +109,14 @@ function draw() {
     //* ML5 default code */
     push();
     translate(0, 0);
-    tint(255, 255);
+    tint(255, 255, 255, videoOpacity);
     // scale(-1, 1)
     image(video, 0, 0, width, height);
     pop();
     drawKeypoints();
 
     //* reading palm */
-    if (readingPalm) {
-        
-    } else if (!readingPalm && !readingComplete) {
-
+    if (readingPalm && !readingComplete) {
+        videoOpacity += 2;
     }
 }
