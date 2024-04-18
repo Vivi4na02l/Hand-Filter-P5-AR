@@ -6,7 +6,6 @@ let predictions = [];
 let dims = {};
 let averageX = 0;
 let newAverageX;
-let handSkeletonColor = "#FFFF00";
 
 //* images */
 let hand;
@@ -69,9 +68,17 @@ function drawKeypoints() {
             let newX = map(keypoint[0], 0, dims.videoWidth, 0, dims.canvasWidth)
             let newY = map(keypoint[1], 0, dims.videoHeight, 0, dims.canvasHeight)
 
-            fill(handSkeletonColor);
-            noStroke();
-            circle(newX, newY, 10);
+            if (!readingComplete) {
+                let currentTimer = ms - whileReadingTimer;
+                
+                /* Calculate hue for rainbow effect */
+                colorMode(HSB, 360, 100, 100); //sets color mode to HSB
+                let hue = map(currentTimer, 0, 5000, 0, 360); // Map the time to a full circle of hues (0-360 degrees)
+                fill(hue, 100, 100);
+
+                noStroke();
+                circle(newX, newY, 10);
+            }
 
             averageX += keypoint[0]
 
