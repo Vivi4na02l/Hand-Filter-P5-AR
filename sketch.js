@@ -18,6 +18,12 @@ let whileReadingTimer = 0;
 let readingComplete = false;
 
 //* aura array */
+let isAuraChose = false;
+let chosenAura = {
+    color: '',
+    RGB: '',
+    text: '',
+};
 let auras = [
     {
         color: "Red",
@@ -198,6 +204,11 @@ function draw() {
     if (!readingComplete) {
         drawChargingBar();   
     }
+
+    if (readingComplete && !isAuraChose) {
+        isAuraChose = true;
+        getRandomAura();
+    }
 }
 
 /**
@@ -249,6 +260,7 @@ function dialogBox() {
     let mBottomH = (fBottomH+iBottomH)/2; //middle Y of the bottom
 
     //* creations of forms for the dialog box */
+    noStroke();
     beginShape();
     bezierVertex(iW, iTopH,
                  mW, mTopH,
@@ -263,7 +275,7 @@ function dialogBox() {
     endShape();
 
     colorMode(RGB, 255);
-    fill('#fff')
+    fill('#f7f7f7')
     beginShape();
     vertex(iW+iW*0.005, mTopH);
     vertex(fW-fW*0.005, mTopH);
@@ -285,10 +297,26 @@ function dialogBox() {
  * @param {*} centerY used to position the text vertically in the middle of the dialog box
  */
 function dialogBoxText(centerX, centerY) {
+    noStroke();
     fill('#000');
+    textSize(20);
+    textStyle(NORMAL);
     
     if (!readingComplete) {
-        text("Show your hands to the camera for the aura reading.", centerX, centerY);
+        text("Show one of your hands to the camera for the aura reading.", centerX, centerY);
+    } else {
+        //* text about the aura color obtained */
+        fill('#000');
+        text(chosenAura.text, centerX, centerY);
+        
+        //* color of the aura as a "title" */
+        textSize(45);
+        textStyle(BOLD);
+        stroke('#fff');
+        strokeWeight(2);
+        fill(chosenAura.RGB);
+
+        text(chosenAura.color, centerX, height*0.1)
     }
 }
 
@@ -337,4 +365,10 @@ function drawChargingBar() {
     vertex(iW, fH);
     vertex(iW, iH);
     endShape();
+}
+
+function getRandomAura() {
+    let randomNbr = Math.floor(Math.random() * auras.length);
+    chosenAura = auras[randomNbr];
+    console.log(chosenAura);
 }
