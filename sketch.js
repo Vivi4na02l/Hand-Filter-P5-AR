@@ -100,6 +100,7 @@ function setup() {
     let canvas = createCanvas(canvasW, canvasH);
     canvas.parent("divBackground");
 
+
     //* ML5 */
     video = createCapture(VIDEO, webcamIsReady);
     handpose = ml5.handpose(video, modelReady);
@@ -107,12 +108,19 @@ function setup() {
         predictions = results;
     });
     video.hide();
+
+
+    //* text */
+    textSize(20);
+    textFont('Arial');
+    textAlign(CENTER, CENTER);
 }
 
 function draw() {
     clear();
     colorMode(RGB, 255);
     ms = millis(); //counts milliseconds throughout the running of the code
+
 
     //* ML5 default code */
     push();
@@ -123,8 +131,11 @@ function draw() {
     pop();
     drawKeypoints();
 
+
     //* dialog box */
-    dialogBox();
+    let [centerX, centerY] = dialogBox();
+    dialogBoxText(centerX, centerY);
+
 
     //* reading palm */
     if (readingPalm && !readingComplete) {
@@ -163,20 +174,28 @@ function dialogBox() {
         fill('#000')
     }
 
-    //* creations of forms for the dialog box */
+    //* definition of dialog box size */
     let iW = width*0.3; //initial X
     let fW = width*0.7; //final X
     let mW = (fW+iW)/2; //middle X for bezierVertex
 
-    let iTopH = height*0.9; //initial Y of the top (lowest Y among the top Ys)
-    let fTopH = height*0.88; //final Y of the top (highest Y)
+    let iPercentageY, fPercentageY;
+    if (readingComplete) {
+        iPercentageY = 0.8;
+        fPercentageY = 0.78
+    } else {
+        iPercentageY = 0.9;
+        fPercentageY = 0.88
+    }
+    let iTopH = height*iPercentageY; //initial Y of the top (lowest Y among the top Ys)
+    let fTopH = height*fPercentageY; //final Y of the top (highest Y)
     let mTopH = (fTopH+iTopH)/2; //middle Y of the top
 
     let iBottomH = height*0.95; //initial Y of the bottom (highest Y among the bottom Ys)
     let fBottomH = height*0.97; //final Y of the bottom (lowest Y)
     let mBottomH = (fBottomH+iBottomH)/2; //middle Y of the bottom
 
-
+    //* creations of forms for the dialog box */
     beginShape();
     bezierVertex(iW, iTopH,
                  mW, mTopH,
@@ -199,6 +218,27 @@ function dialogBox() {
     vertex(iW+iW*0.005, mBottomH);
     vertex(iW+iW*0.005, mTopH);
     endShape();
+
+    //* horizontal and vertical middle of the dialog box */
+    let centerX = mW;
+    let centerY = (fTopH+fBottomH)/2;
+
+    return [centerX, centerY];
+}
+
+/**
+ * text of the dialog box
+ * @param {*} centerX used to position the text horizontally in the middle of the dialog box
+ * @param {*} centerY used to position the text vertically in the middle of the dialog box
+ */
+function dialogBoxText(centerX, centerY) {
+    fill('#000');
+
+    console.log(centerX, centerY);
+    
+    if (!readingComplete) {
+        text("Show your hands to the camera for the aura reading.", centerX, centerY);
+    }
 }
 
 /**
