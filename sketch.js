@@ -192,8 +192,8 @@ function draw() {
 
 
     //* dialog box */
-    let [centerX, centerY] = dialogBox();
-    dialogBoxText(centerX, centerY);
+    let [centerX, centerY, maxWidth] = dialogBox();
+    dialogBoxText(centerX, centerY, maxWidth);
 
 
     //* reading palm */
@@ -287,8 +287,9 @@ function dialogBox() {
     //* horizontal and vertical middle of the dialog box */
     let centerX = mW;
     let centerY = (fTopH+fBottomH)/2;
+    let maxWidth = fW - iW;
 
-    return [centerX, centerY];
+    return [centerX, centerY, maxWidth];
 }
 
 /**
@@ -296,18 +297,19 @@ function dialogBox() {
  * @param {*} centerX used to position the text horizontally in the middle of the dialog box
  * @param {*} centerY used to position the text vertically in the middle of the dialog box
  */
-function dialogBoxText(centerX, centerY) {
+function dialogBoxText(centerX, centerY, maxWidth) {
     noStroke();
     fill('#000');
     textSize(20);
     textStyle(NORMAL);
     
     if (!readingComplete) {
-        text("Show one of your hands to the camera for the aura reading.", centerX, centerY);
+        textAlign(CENTER, CENTER);
+        text("Show one of your hands to the camera for the aura reading.", centerX-maxWidth/2, centerY, maxWidth);
     } else {
         //* text about the aura color obtained */
         fill('#000');
-        text(chosenAura.text, centerX, centerY);
+        text(chosenAura.text, centerX-maxWidth/2, centerY, maxWidth);
         
         //* color of the aura as a "title" */
         textSize(45);
