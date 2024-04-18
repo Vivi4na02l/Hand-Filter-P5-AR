@@ -70,10 +70,8 @@ function drawKeypoints() {
 
             if (!readingComplete) {
                 let currentTimer = ms - whileReadingTimer;
-                
-                /* Calculate hue for rainbow effect */
-                colorMode(HSB, 360, 100, 100); //sets color mode to HSB
-                let hue = map(currentTimer, 0, 5000, 0, 360); // Map the time to a full circle of hues (0-360 degrees)
+
+                let hue = colorRainbowHue();
                 fill(hue, 100, 100);
 
                 noStroke();
@@ -125,6 +123,9 @@ function draw() {
     pop();
     drawKeypoints();
 
+    //* dialog box */
+    dialogBox();
+
     //* reading palm */
     if (readingPalm && !readingComplete) {
         videoOpacity += 2;
@@ -135,8 +136,76 @@ function draw() {
     }
 }
 
+/**
+ * calculates hue for rainbow effect
+ * @returns rainbow hue
+ */
+function colorRainbowHue() {
+    let currentTimer = ms - whileReadingTimer;
+
+    colorMode(HSB, 360, 100, 100); //sets color mode to HSB
+    let hue = map(currentTimer, 0, 5000, 0, 360); // Map the time to a full circle of hues (0-360 degrees)
+
+    return hue;
+}
+
+/**
+ * function that creates the dialog box
+ */
+function dialogBox() {
+    //* color */
+    /* for the color of the rectangle behind the dialog box */
+    if (readingPalm && !readingComplete) {
+        let hue = colorRainbowHue();
+        fill(hue, 100, 100);   
+    } else if (!readingPalm && !readingComplete) {
+        colorMode(RGB, 255);
+        fill('#000')
+    }
+
+    //* creations of forms for the dialog box */
+    let iW = width*0.3; //initial X
+    let fW = width*0.7; //final X
+    let mW = (fW+iW)/2; //middle X for bezierVertex
+
+    let iTopH = height*0.9; //initial Y of the top (lowest Y among the top Ys)
+    let fTopH = height*0.88; //final Y of the top (highest Y)
+    let mTopH = (fTopH+iTopH)/2; //middle Y of the top
+
+    let iBottomH = height*0.95; //initial Y of the bottom (highest Y among the bottom Ys)
+    let fBottomH = height*0.97; //final Y of the bottom (lowest Y)
+    let mBottomH = (fBottomH+iBottomH)/2; //middle Y of the bottom
+
+
+    beginShape();
+    bezierVertex(iW, iTopH,
+                 mW, mTopH,
+                 fW, fTopH);
+    vertex(fW, fTopH);
+    vertex(fW, iBottomH);
+    bezierVertex(fW, iBottomH,
+                 mW, mBottomH,
+                 iW, fBottomH);
+    vertex(iW, fBottomH);
+    vertex(iW, iTopH);
+    endShape();
+
+    colorMode(RGB, 255);
+    fill('#fff')
+    beginShape();
+    vertex(iW+iW*0.005, mTopH);
+    vertex(fW-fW*0.005, mTopH);
+    vertex(fW-fW*0.005, mBottomH);
+    vertex(iW+iW*0.005, mBottomH);
+    vertex(iW+iW*0.005, mTopH);
+    endShape();
+}
+
+/**
+ * code responsable for making the border and filling of the rectangle progress bar representing the "reading of palm"
+ */
 function drawChargingBar() {
-    //* code responsable for making the filling of the rectangle progress with the "reading of palm" */
+    //* logic for filling of the rectangle progress bar */
     let iW = width*0.3;
     let iH = height*0.05;
     let fW = width*0.7;
@@ -165,11 +234,7 @@ function drawChargingBar() {
     vertex(iW, iH);
     endShape();
 
-    
-    /* Calculate hue for rainbow effect */
-    colorMode(HSB, 360, 100, 100); //sets color mode to HSB
-    let hue = map(currentTimer, 0, 5000, 0, 360); // Map the time to a full circle of hues (0-360 degrees)
-
+    let hue = colorRainbowHue();
     fill(hue, 100, 100);
     noStroke();
 
