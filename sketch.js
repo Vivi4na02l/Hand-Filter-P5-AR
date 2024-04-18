@@ -24,59 +24,74 @@ let chosenAura = {
     color: '',
     RGB: '',
     text: '',
+    song: 'playtime'
 };
 let auras = [
     {
         color: "Red",
         RGB: "#CF2E2E",
         text: "You are both emotionally and psychically grounded or balanced. Material wealth and spending is a fun game, and you hate to deny yourself the simple pleasures in life.",
+        song: "playtime"
     },
     {
         color: "Orange",
         RGB: "#FF6900",
         text: "You are quick to make and keep friends. Your emotions are highly influenced by the relationships you have with others.",
+        song: "playtime"
+
     },
     {
         color: "Yellow",
         RGB: "#FCB900",
         text: "You have a playful awakened spirit, a high self-esteem, high intellect and a huge hunger for greatness.",
+        song: "playtime"
     },
     {
         color: "Green",
         RGB: "#00D084",
         text: "You are either in love with someone who balances you out, or you have a kind, loving heart. You have also a loving kindness towards animals, plants, friends, family and life in general.",
+        song: "love"
     },
     {
         color: "Blue",
         RGB: "#0693E3",
         text: "You are usually in a calm state of mind. You can't be bothered easily. You are frequently a support system for your friends and family.",
+        song: "calm"
     },
     {
         color: "Indigo",
         RGB: "#4B0082",
         text: "You search for the truths that the unknown holds and you can sense other people's energies. You can also see past the deceit that people try to pass as truth.",
+        song: "dark"
     },
     {
         color: "Purple",
         RGB: "#800080",
-        text: 'You are intuitive and the type of person to "view the larger picture". You love to guide others to their highest potential.',
+        text: 'You are intuitive and the type of person to "view the larger picture". You love everyone and to guide others to their highest potential.',
+        song: "love"
     },
     {
         color: "Pink",
         RGB: "#F78DA7",
         text: "You are happy and in harmony with yourself and those around you. You are very gentle to yourself and others.",
+        song: "calm"
     },
     {
         color: "Black",
         RGB: "#000",
         text: "You have a large amount of built-up anger or grief inside of you. You haven't forgiven what has happened to you and you're still holding onto that pain.",
+        song: "dark"
     },
     {
         color: "White",
         RGB: "#fff",
         text: "In this life, you are more concerned with your positive impact in others lives. You don't care so much for material possession or needs.",
+        song: "calm"
     },
 ]
+
+//* songs */
+let playtime, love, dark, calm;
 
 /**
  * ML5 function for when camera is ready and defining its dimensions
@@ -192,7 +207,11 @@ function sizeOfAuraCircle(keypoints) {
 }
 
 function preload() {
-    hand = loadImage('images/hand.png');
+    //* sound */  
+    playtime = loadSound("songs/playtime-bedtime-193378.mp3");
+    love = loadSound("songs/fall-in-love-with-a-stranger-piano-bar-lounge-music-5853.mp3");
+    dark = loadSound("songs/8-bit-halloween-story-166454.mp3");
+    calm = loadSound("songs/please-calm-my-mind-125566.mp3");
 }
 
 function setup() {
@@ -252,6 +271,7 @@ function draw() {
     if (readingComplete && !isAuraChose) {
         isAuraChose = true;
         getRandomAura();
+        playAuraSong();
     }
 }
 
@@ -422,6 +442,30 @@ function getRandomAura() {
     console.log(chosenAura);
 }
 
+function playAuraSong() {
+    if (chosenAura.song == 'playtime') {
+        playtime.play();
+        playtime.loop();
+        playtime.setVolume(0.3);
+        userStartAudio();   
+    } else if (chosenAura.song == 'love') {
+        love.play();
+        love.loop();
+        love.setVolume(0.3);
+        userStartAudio(); 
+    } else if (chosenAura.song == 'dark') {
+        dark.play();
+        dark.loop();
+        dark.setVolume(0.3);
+        userStartAudio(); 
+    } else if (chosenAura.song == 'calm') {
+        calm.play();
+        calm.loop();
+        calm.setVolume(0.5);
+        userStartAudio(); 
+    }
+}
+
 /**
  * resets the entire aura reading thing
  */
@@ -432,4 +476,14 @@ window.addEventListener('click', e => {
     whileReadingTimer = 0;
     readingComplete = false;
     isAuraChose = false;
+
+    if (chosenAura.song == 'playtime') {
+        playtime.stop();
+    } else if (chosenAura.song == 'love') {
+        love.stop();
+    } else if (chosenAura.song == 'dark') {
+        dark.stop();
+    } else if (chosenAura.song == 'calm') {
+        calm.stop();
+    }
 })
