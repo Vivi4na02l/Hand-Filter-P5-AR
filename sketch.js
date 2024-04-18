@@ -47,11 +47,13 @@ function drawKeypoints() {
             videoOpacity = 50;
         }
     } else {
+        //if palm just appeared in screen
         if (!readingPalm) {
             readingPalm = true;
             whileReadingTimer = ms;
         }
 
+        //if palm is still consistent in the screen and the timer reaches 5 seconds
         if (ms - whileReadingTimer > 5000 && readingPalm) {
             readingComplete = true;
         }
@@ -104,6 +106,7 @@ function setup() {
 
 function draw() {
     clear();
+    colorMode(RGB, 255);
     ms = millis(); //counts milliseconds throughout the running of the code
 
     //* ML5 default code */
@@ -119,4 +122,56 @@ function draw() {
     if (readingPalm && !readingComplete) {
         videoOpacity += 2;
     }
+
+    if (!readingComplete) {
+        drawChargingBar();   
+    }
+}
+
+function drawChargingBar() {
+    //* code responsable for making the filling of the rectangle progress with the "reading of palm" */
+    let iW = width*0.3;
+    let iH = height*0.05;
+    let fW = width*0.7;
+    let fH = height*0.1;
+
+    let currentTimer = ms - whileReadingTimer;
+    let progressW = 0;
+
+    if (readingPalm && !readingComplete) { //if palm is being read and reading isn't complete
+        progressW = ((fW-iW)*currentTimer)/5000; //math rule of three to discover the filling of the rectangle's width corresponding to timer
+    } else if (!readingPalm && !readingComplete) { //resets progress bar if the reading is stops before being complete
+        progressW = 0;
+    }
+
+    //* drawing of rectangle's border and its filling */
+    noFill();
+    stroke("#000");
+    strokeWeight(2);
+
+    //border
+    beginShape();
+    vertex(iW, iH);
+    vertex(fW, iH);
+    vertex(fW, fH);
+    vertex(iW, fH);
+    vertex(iW, iH);
+    endShape();
+
+    
+    /* Calculate hue for rainbow effect */
+    colorMode(HSB, 360, 100, 100); //sets color mode to HSB
+    let hue = map(currentTimer, 0, 5000, 0, 360); // Map the time to a full circle of hues (0-360 degrees)
+
+    fill(hue, 100, 100);
+    noStroke();
+
+    //filling of border
+    beginShape();
+    vertex(iW, iH);
+    vertex(iW+progressW, iH);
+    vertex(iW+progressW, fH);
+    vertex(iW, fH);
+    vertex(iW, iH);
+    endShape();
 }
