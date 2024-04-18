@@ -17,6 +17,59 @@ let readingPalm = false; //variable used to when the user's hand is above the im
 let whileReadingTimer = 0;
 let readingComplete = false;
 
+//* aura array */
+let auras = [
+    {
+        color: "Red",
+        RGB: "#CF2E2E",
+        text: "you are both emotionally and psychically grounded or balanced. Material wealth and spending is a fun game, and you hate to deny yourself the simple pleasures in life.",
+    },
+    {
+        color: "Orange",
+        RGB: "#FF6900",
+        text: "You are quick to make and keep friends. Your emotions are highly influenced by the relationships you have with others.",
+    },
+    {
+        color: "Yellow",
+        RGB: "#FCB900",
+        text: "You have a playful awakened spirit, a high self-esteem, high intellect and a huge hunger for greatness.",
+    },
+    {
+        color: "Green",
+        RGB: "#00D084",
+        text: "You are either in love with someone who balances you out, or you have a kind, loving heart. You have also a loving kindness towards animals, plants, friends, family and life in general.",
+    },
+    {
+        color: "Blue",
+        RGB: "#0693E3",
+        text: "You are usually in a calm state of mind. You can't be bothered easily. You are frequently a support system for your friends and family.",
+    },
+    {
+        color: "Indigo",
+        RGB: "#4B0082",
+        text: "You search for the truths that the unknown holds and you can sense other people's energies. You can also see past the deceit that people try to pass as truth.",
+    },
+    {
+        color: "Purple",
+        RGB: "#800080",
+        text: 'You are intuitive and the type of person to "view the larger picture". You love to guide others to their highest potential.',
+    },
+    {
+        color: "Pink",
+        RGB: "#F78DA7",
+        text: "You are happy and in harmony with yourself and those around you. You are very gentle to yourself and others.",
+    },
+    {
+        color: "Black",
+        RGB: "#000",
+        text: "You have a large amount of built-up anger or grief inside of you. You haven't forgiven what has happened to you and you're still holding onto that pain.",
+    },
+    {
+        color: "White",
+        RGB: "#fff",
+        text: "In this life, you are more concerned with your positive impact in others lives. You don't care so much for material possession or needs.",
+    },
+]
 
 /**
  * ML5 function for when camera is ready and defining its dimensions
@@ -233,8 +286,6 @@ function dialogBox() {
  */
 function dialogBoxText(centerX, centerY) {
     fill('#000');
-
-    console.log(centerX, centerY);
     
     if (!readingComplete) {
         text("Show your hands to the camera for the aura reading.", centerX, centerY);
