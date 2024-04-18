@@ -28,7 +28,7 @@ let auras = [
     {
         color: "Red",
         RGB: "#CF2E2E",
-        text: "you are both emotionally and psychically grounded or balanced. Material wealth and spending is a fun game, and you hate to deny yourself the simple pleasures in life.",
+        text: "You are both emotionally and psychically grounded or balanced. Material wealth and spending is a fun game, and you hate to deny yourself the simple pleasures in life.",
     },
     {
         color: "Orange",
@@ -287,7 +287,7 @@ function dialogBox() {
     //* horizontal and vertical middle of the dialog box */
     let centerX = mW;
     let centerY = (fTopH+fBottomH)/2;
-    let maxWidth = fW - iW;
+    let maxWidth = (fW - iW)*0.98;
 
     return [centerX, centerY, maxWidth];
 }
@@ -374,3 +374,15 @@ function getRandomAura() {
     chosenAura = auras[randomNbr];
     console.log(chosenAura);
 }
+
+/**
+ * resets the entire aura reading thing
+ */
+window.addEventListener('click', e => {
+    videoOpacity = 50;
+    readingPalmMode = true; //variable used when the image "hand" is visible
+    readingPalm = false; //variable used to when the user's hand is above the image "hand"
+    whileReadingTimer = 0;
+    readingComplete = false;
+    isAuraChose = false;
+})
